@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { LeaderboardEntry } from '../types';
-import { Trophy, Users } from 'lucide-react';
-import { Candlestick } from 'recharts';
+import { Trophy, Users, ChevronRight, ChevronLeft } from 'lucide-react';
 
 interface LeaderboardProps {
   entries: LeaderboardEntry[];
@@ -10,10 +9,28 @@ interface LeaderboardProps {
 
 export const Leaderboard: React.FC<LeaderboardProps> = ({ entries, currentUserEmail }) => {
   const [showOnlyFriends, setShowOnlyFriends] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Nombre de joueurs par page
 
   const filteredEntries = showOnlyFriends 
     ? entries.filter(entry => entry.isFriend || entry.email === currentUserEmail)
     : entries;
+
+  // Calcul du nombre total de pages
+  const totalPages = Math.ceil(filteredEntries.length / itemsPerPage);
+  
+  // Obtention des entrées pour la page actuelle
+  const currentEntries = filteredEntries.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Fonction pour changer de page
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4">
@@ -35,7 +52,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries, currentUserEm
         </button>
       </div>
       <div className="space-y-2">
-        {filteredEntries.map((entry) => (
+        {currentEntries.map((entry) => (
           <div
             key={entry.email}
             className={`p-3 rounded-lg ${
@@ -75,6 +92,69 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries, currentUserEm
           </div>
         ))}
       </div>
+      
+      {/* Contrôles de pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200">
+          <div className="text-sm text-gray-700">
+            Page <span className="font-medium">{currentPage}</span> sur <span className="font-medium">{totalPages}</span>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => goToPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`p-1 rounded ${
+                currentPage === 1
+                  ? 'text-gray-400 cursor-not-allowed'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            
+            {/* Afficher les numéros de page */}
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              // Calculer les numéros de page à afficher
+              let pageNum;
+              if (totalPages <= 5) {
+                pageNum = i + 1;
+              } else if (currentPage <= 3) {
+                pageNum = i + 1;
+              } else if (currentPage >= totalPages - 2) {
+                pageNum = totalPages - 4 + i;
+              } else {
+                pageNum = currentPage - 2 + i;
+              }
+              
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => goToPage(pageNum)}
+                  className={`w-8 h-8 flex items-center justify-center rounded ${
+                    currentPage === pageNum
+                      ? 'bg-blue-500 text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+            
+            <button
+              onClick={() => goToPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`p-1 rounded ${
+                currentPage === totalPages
+                  ? 'text-gray-400 cursor-not-allowed'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

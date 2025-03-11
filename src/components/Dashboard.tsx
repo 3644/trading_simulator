@@ -41,13 +41,23 @@ export const Dashboard: React.FC = () => {
     if (user) {
       const totalValue = calculateTotalValue();
       
-      // Simuler d'autres utilisateurs pour le leaderboard
+      // Générer un plus grand nombre d'utilisateurs fictifs pour le leaderboard
       const mockUsers = [
         { email: 'trader1@example.com', totalValue: 12500 + Math.random() * 5000, isFriend: true },
         { email: 'crypto_king@example.com', totalValue: 15000 + Math.random() * 7000, isFriend: false },
         { email: 'hodler99@example.com', totalValue: 8000 + Math.random() * 3000, isFriend: false },
         { email: 'satoshi_fan@example.com', totalValue: 20000 + Math.random() * 10000, isFriend: false },
         { email: 'altcoin_lover@example.com', totalValue: 5000 + Math.random() * 2000, isFriend: true },
+        { email: 'bitcoin_believer@example.com', totalValue: 17500 + Math.random() * 8000, isFriend: false },
+        { email: 'eth_enthusiast@example.com', totalValue: 13000 + Math.random() * 6000, isFriend: false },
+        { email: 'defi_master@example.com', totalValue: 18000 + Math.random() * 7000, isFriend: false },
+        { email: 'nft_collector@example.com', totalValue: 11000 + Math.random() * 4000, isFriend: false },
+        { email: 'stablecoin_sage@example.com', totalValue: 9500 + Math.random() * 2500, isFriend: false },
+        { email: 'cryptoanalyst@example.com', totalValue: 14500 + Math.random() * 5500, isFriend: false },
+        { email: 'blockchain_dev@example.com', totalValue: 16000 + Math.random() * 6500, isFriend: false },
+        { email: 'web3_wizard@example.com', totalValue: 19000 + Math.random() * 8000, isFriend: false },
+        { email: 'metaverse_pioneer@example.com', totalValue: 10500 + Math.random() * 3500, isFriend: false },
+        { email: 'token_trader@example.com', totalValue: 13500 + Math.random() * 4500, isFriend: false }
       ];
       
       // Ajouter l'utilisateur actuel aux entrées du leaderboard
@@ -58,7 +68,7 @@ export const Dashboard: React.FC = () => {
         isFriend: false
       };
 
-      // Ajouter les amis comme étant des "amis" dans le leaderboard
+      // Marquer les amis comme étant des "amis" dans le leaderboard
       const friendsEntries = mockUsers.map(entry => ({
         ...entry,
         isFriend: user.friends.includes(entry.email) || entry.isFriend
@@ -121,32 +131,49 @@ export const Dashboard: React.FC = () => {
   }, []);
 
   const handleBuy = (crypto: Crypto, leverage: number, isShort: boolean, takeProfit?: number, stopLoss?: number) => {
-    const amount = parseFloat(prompt(`Combien de ${crypto.symbol.toUpperCase()} voulez-vous ${isShort ? 'shorter' : 'acheter'}?`) || '0');
-    if (amount <= 0) return;
-
-    const cost = amount * crypto.current_price;
-    if (cost > balance) {
-      alert('Fonds insuffisants!');
+    if (balance <= 0) {
+      alert('Solde insuffisant !');
       return;
     }
 
-    setBalance(prev => Number(prev) - cost);
-    setPortfolio(prev => {
-      const existing = prev[crypto.id] || { amount: 0, averagePrice: 0, leverage: 1, isShort: false };
-      const totalAmount = Number(existing.amount) + amount;
-      const totalCost = Number(existing.amount) * Number(existing.averagePrice) + cost;
-      return {
-        ...prev,
-        [crypto.id]: {
-          amount: totalAmount,
-          averagePrice: totalCost / totalAmount,
-          leverage: leverage,
-          isShort: isShort,
-          takeProfit: takeProfit,
-          stopLoss: stopLoss
-        },
+    const investAmount = 100; // Montant fixe pour la simplicité
+    if (investAmount > balance) {
+      alert('Solde insuffisant !');
+      return;
+    }
+
+    const updatedPortfolio = { ...portfolio };
+    const price = crypto.current_price;
+
+    // Mise à jour du portfolio avec la nouvelle position
+    if (updatedPortfolio[crypto.id]) {
+      // Si on a déjà une position sur cette crypto, on l'ajuste
+      const currentHolding = updatedPortfolio[crypto.id];
+      const totalAmount = currentHolding.amount + (investAmount / price);
+      const totalInvested = currentHolding.amount * currentHolding.averagePrice + investAmount;
+      updatedPortfolio[crypto.id] = {
+        amount: totalAmount,
+        averagePrice: totalInvested / totalAmount,
+        leverage: leverage,
+        isShort: isShort,
+        takeProfit: takeProfit, // Ajout du take profit
+        stopLoss: stopLoss      // Ajout du stop loss
       };
-    });
+    } else {
+      // Nouvelle position
+      updatedPortfolio[crypto.id] = {
+        amount: investAmount / price,
+        averagePrice: price,
+        leverage: leverage,
+        isShort: isShort,
+        takeProfit: takeProfit, // Ajout du take profit
+        stopLoss: stopLoss      // Ajout du stop loss
+      };
+    }
+
+    // Mise à jour du solde et du portfolio
+    setPortfolio(updatedPortfolio);
+    setBalance(prevBalance => prevBalance - investAmount);
   };
 
   const handleSell = (crypto: Crypto) => {
@@ -189,6 +216,72 @@ export const Dashboard: React.FC = () => {
     logout();
     navigate('/login');
   };
+
+  // Cette fonction vérifie les positions pour les take profit et stop loss
+  const checkTakeProfitStopLoss = () => {
+    let portfolioUpdated = false;
+    const updatedPortfolio = { ...portfolio };
+    let totalProfit = 0;
+
+    // Parcourir toutes les positions
+    Object.entries(portfolio).forEach(([cryptoId, holding]) => {
+      const crypto = cryptos.find(c => c.id === cryptoId);
+      if (!crypto) return;
+
+      const currentPrice = crypto.current_price;
+      const { takeProfit, stopLoss, isShort, averagePrice, amount, leverage } = holding;
+
+      // Calculer si un TP ou SL est atteint
+      let shouldClose = false;
+      let closeReason = '';
+
+      if (takeProfit) {
+        if (isShort && currentPrice <= takeProfit) {
+          shouldClose = true;
+          closeReason = 'Take Profit';
+        } else if (!isShort && currentPrice >= takeProfit) {
+          shouldClose = true;
+          closeReason = 'Take Profit';
+        }
+      }
+
+      if (stopLoss && !shouldClose) {
+        if (isShort && currentPrice >= stopLoss) {
+          shouldClose = true;
+          closeReason = 'Stop Loss';
+        } else if (!isShort && currentPrice <= stopLoss) {
+          shouldClose = true;
+          closeReason = 'Stop Loss';
+        }
+      }
+
+      // Fermer la position si nécessaire
+      if (shouldClose) {
+        const priceChange = isShort ? averagePrice - currentPrice : currentPrice - averagePrice;
+        const profit = priceChange * amount * leverage;
+        totalProfit += profit + (amount * averagePrice);
+        
+        // Supprimer la position
+        delete updatedPortfolio[cryptoId];
+        portfolioUpdated = true;
+        
+        console.log(`Position fermée (${closeReason}): ${crypto.name}, Profit: $${profit.toFixed(2)}`);
+      }
+    });
+
+    // Mettre à jour le portfolio et le solde si des positions ont été fermées
+    if (portfolioUpdated) {
+      setPortfolio(updatedPortfolio);
+      setBalance(prevBalance => prevBalance + totalProfit);
+    }
+  };
+
+  // Appliquer la vérification des TP/SL chaque fois que les prix des cryptos changent
+  useEffect(() => {
+    if (Object.keys(portfolio).length > 0) {
+      checkTakeProfitStopLoss();
+    }
+  }, [cryptos]);
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">

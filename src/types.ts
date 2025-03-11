@@ -10,7 +10,7 @@ export interface Crypto {
 }
 
 export interface Portfolio {
-  [key: string]: {
+  [cryptoId: string]: {
     amount: number;
     averagePrice: number;
     leverage: number;
