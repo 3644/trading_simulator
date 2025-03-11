@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LeaderboardEntry } from '../types';
 import { Trophy, Users } from 'lucide-react';
+import { Candlestick } from 'recharts';
 
 interface LeaderboardProps {
   entries: LeaderboardEntry[];
