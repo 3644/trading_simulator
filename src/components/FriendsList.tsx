@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { User } from '../types';
-import { UserPlus, Users } from 'lucide-react';
 
 interface FriendsListProps {
   currentUser: User;
@@ -24,7 +23,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({ currentUser, onAddFrie
   return (
     <div className="bg-white rounded-lg shadow-md p-4 mb-4">
       <div className="flex items-center gap-2 mb-4">
-        <Users className="w-6 h-6 text-blue-500" />
+        <span className="text-blue-500 text-xl">👥</span>
         <h2 className="text-2xl font-bold">Mes Amis</h2>
       </div>
       
@@ -41,7 +40,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({ currentUser, onAddFrie
             type="submit"
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
           >
-            <UserPlus className="w-5 h-5" />
+            <span>➕</span>
             Ajouter
           </button>
         </div>

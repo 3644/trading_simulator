@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowUpCircle, ArrowDownCircle, Search, ArrowUpDown, ChevronLeft, ChevronRight, Settings } from 'lucide-react';
 import { Crypto } from '../types';
 import { CryptoChart } from './CryptoChart';
 
@@ -135,7 +134,7 @@ export const CryptoList: React.FC<CryptoListProps> = ({ cryptos, onBuy, onSell }
       <div className="mb-6">
         <div className="flex items-center gap-4 mb-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</span>
             <input
               type="text"
               placeholder="Rechercher une cryptomonnaie..."
@@ -152,7 +151,7 @@ export const CryptoList: React.FC<CryptoListProps> = ({ cryptos, onBuy, onSell }
               sortField === 'name' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            Nom <ArrowUpDown className="w-4 h-4" />
+            Nom <span>⇅</span>
           </button>
           <button
             onClick={() => handleSort('price')}
@@ -160,7 +159,7 @@ export const CryptoList: React.FC<CryptoListProps> = ({ cryptos, onBuy, onSell }
               sortField === 'price' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            Prix <ArrowUpDown className="w-4 h-4" />
+            Prix <span>⇅</span>
           </button>
           <button
             onClick={() => handleSort('change')}
@@ -168,7 +167,7 @@ export const CryptoList: React.FC<CryptoListProps> = ({ cryptos, onBuy, onSell }
               sortField === 'change' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            Variation <ArrowUpDown className="w-4 h-4" />
+            Variation <span>⇅</span>
           </button>
         </div>
       </div>
@@ -184,9 +183,9 @@ export const CryptoList: React.FC<CryptoListProps> = ({ cryptos, onBuy, onSell }
                 <p className="font-bold">${crypto.current_price.toLocaleString()}</p>
                 <p className={crypto.price_change_percentage_24h >= 0 ? 'text-green-600' : 'text-red-600'}>
                   {crypto.price_change_percentage_24h >= 0 ? (
-                    <ArrowUpCircle className="inline mr-1" size={16} />
+                    <span className="inline mr-1">⬆️</span>
                   ) : (
-                    <ArrowDownCircle className="inline mr-1" size={16} />
+                    <span className="inline mr-1">⬇️</span>
                   )}
                   {Math.abs(crypto.price_change_percentage_24h).toFixed(2)}%
                 </p>
@@ -231,7 +230,7 @@ export const CryptoList: React.FC<CryptoListProps> = ({ cryptos, onBuy, onSell }
                   }`}
                   title="Paramètres avancés"
                 >
-                  <Settings size={16} />
+                  <span>⚙️</span>
                 </button>
               </div>
               
@@ -351,7 +350,7 @@ export const CryptoList: React.FC<CryptoListProps> = ({ cryptos, onBuy, onSell }
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <ChevronLeft className="w-5 h-5" />
+              <span>◀️</span>
             </button>
             
             {[...Array(Math.min(5, totalPages))].map((_, idx) => {
@@ -391,7 +390,7 @@ export const CryptoList: React.FC<CryptoListProps> = ({ cryptos, onBuy, onSell }
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <ChevronRight className="w-5 h-5" />
+              <span>▶️</span>
             </button>
           </div>
         </div>

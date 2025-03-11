@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, ScatterChart, Scatter, Line, ComposedChart } from 'recharts';
-import { Maximize2, Minimize2, BarChart3, TrendingUp, ChartCandlestick, X } from 'lucide-react';
 
 interface CryptoChartProps {
   data: number[];
@@ -176,28 +175,28 @@ export const CryptoChart: React.FC<CryptoChartProps> = ({ data, fullData }) => {
             className={`p-2 rounded ${chartType === 'line' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
             title="Graphique en ligne"
           >
-            <TrendingUp size={20} />
+            <span className="font-bold">📈</span>
           </button>
           <button
             onClick={() => setChartType('candlestick')}
             className={`p-2 rounded ${chartType === 'candlestick' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
             title="Graphique en bougies"
           >
-            <ChartCandlestick size={20} />
+            <span className="font-bold">📊</span>
           </button>
           <button
             onClick={() => setChartType('volume')}
             className={`p-2 rounded ${chartType === 'volume' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
             title="Graphique en volume"
           >
-            <BarChart3 size={20} />
+            <span className="font-bold">📋</span>
           </button>
           <button
             onClick={toggleExpand}
             className="p-2 rounded bg-red-500 text-white"
             title="Fermer"
           >
-            <X size={20} />
+            <span className="font-bold">✖️</span>
           </button>
         </div>
       )}
@@ -207,7 +206,7 @@ export const CryptoChart: React.FC<CryptoChartProps> = ({ data, fullData }) => {
           className="absolute top-0 right-0 p-1 bg-gray-200 rounded-bl text-gray-600 hover:bg-gray-300"
           title="Agrandir"
         >
-          <Maximize2 size={16} />
+          <span className="font-bold text-xs">⤢</span>
         </button>
       )}
       <ResponsiveContainer width="100%" height="100%">

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { LeaderboardEntry } from '../types';
-import { Trophy, Users, ChevronRight, ChevronLeft } from 'lucide-react';
 
 interface LeaderboardProps {
   entries: LeaderboardEntry[];
@@ -36,7 +35,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries, currentUserEm
     <div className="bg-white rounded-lg shadow-md p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Trophy className="w-6 h-6 text-yellow-500" />
+          <span className="text-yellow-500 text-xl">🏆</span>
           <h2 className="text-2xl font-bold">Classement des Traders</h2>
         </div>
         <button
@@ -47,7 +46,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries, currentUserEm
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          <Users className="w-4 h-4" />
+          <span className="text-sm">👥</span>
           {showOnlyFriends ? 'Tous' : 'Amis'}
         </button>
       </div>
@@ -109,7 +108,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries, currentUserEm
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <ChevronLeft className="w-5 h-5" />
+              <span className="font-bold">◀️</span>
             </button>
             
             {/* Afficher les numéros de page */}
@@ -150,7 +149,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries, currentUserEm
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <ChevronRight className="w-5 h-5" />
+              <span className="font-bold">▶️</span>
             </button>
           </div>
         </div>
