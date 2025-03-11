@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, ScatterChart, Scatter, Line, ComposedChart } from 'recharts';
-import { Maximize2, Minimize2, BarChart3, TrendingUp, Candlestick as CandlestickIcon, X } from 'lucide-react';
+import { Maximize2, Minimize2, BarChart3, TrendingUp, ChartCandlestick, X } from 'lucide-react';
 
 interface CryptoChartProps {
   data: number[];
@@ -183,7 +183,7 @@ export const CryptoChart: React.FC<CryptoChartProps> = ({ data, fullData }) => {
             className={`p-2 rounded ${chartType === 'candlestick' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
             title="Graphique en bougies"
           >
-            <CandlestickIcon size={20} />
+            <ChartCandlestick size={20} />
           </button>
           <button
             onClick={() => setChartType('volume')}
