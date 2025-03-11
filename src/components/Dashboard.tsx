@@ -40,6 +40,17 @@ export const Dashboard: React.FC = () => {
   useEffect(() => {
     if (user) {
       const totalValue = calculateTotalValue();
+      
+      // Simuler d'autres utilisateurs pour le leaderboard
+      const mockUsers = [
+        { email: 'trader1@example.com', totalValue: 12500 + Math.random() * 5000, isFriend: true },
+        { email: 'crypto_king@example.com', totalValue: 15000 + Math.random() * 7000, isFriend: false },
+        { email: 'hodler99@example.com', totalValue: 8000 + Math.random() * 3000, isFriend: false },
+        { email: 'satoshi_fan@example.com', totalValue: 20000 + Math.random() * 10000, isFriend: false },
+        { email: 'altcoin_lover@example.com', totalValue: 5000 + Math.random() * 2000, isFriend: true },
+      ];
+      
+      // Ajouter l'utilisateur actuel aux entrées du leaderboard
       const userEntry: LeaderboardEntry = {
         email: user.email,
         totalValue,
@@ -47,7 +58,14 @@ export const Dashboard: React.FC = () => {
         isFriend: false
       };
 
-      const allEntries = [userEntry]
+      // Ajouter les amis comme étant des "amis" dans le leaderboard
+      const friendsEntries = mockUsers.map(entry => ({
+        ...entry,
+        isFriend: user.friends.includes(entry.email) || entry.isFriend
+      }));
+
+      // Combiner l'utilisateur actuel et les entrées simulées, trier et attribuer des rangs
+      const allEntries = [userEntry, ...friendsEntries]
         .sort((a, b) => b.totalValue - a.totalValue)
         .map((entry, index) => ({ ...entry, rank: index + 1 }));
 
@@ -102,7 +120,7 @@ export const Dashboard: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleBuy = (crypto: Crypto, leverage: number, isShort: boolean) => {
+  const handleBuy = (crypto: Crypto, leverage: number, isShort: boolean, takeProfit?: number, stopLoss?: number) => {
     const amount = parseFloat(prompt(`Combien de ${crypto.symbol.toUpperCase()} voulez-vous ${isShort ? 'shorter' : 'acheter'}?`) || '0');
     if (amount <= 0) return;
 
@@ -123,7 +141,9 @@ export const Dashboard: React.FC = () => {
           amount: totalAmount,
           averagePrice: totalCost / totalAmount,
           leverage: leverage,
-          isShort: isShort
+          isShort: isShort,
+          takeProfit: takeProfit,
+          stopLoss: stopLoss
         },
       };
     });

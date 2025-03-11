@@ -15,6 +15,8 @@ export interface Portfolio {
     averagePrice: number;
     leverage: number;
     isShort: boolean;
+    takeProfit?: number;
+    stopLoss?: number;
   };
 }
 
